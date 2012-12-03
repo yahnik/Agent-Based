@@ -3,54 +3,59 @@ Include: person.2apl
 BeliefUpdates:
   { bomb(X,Y) }         RemoveBomb(X,Y) { not bomb(X,Y) }
   { true }              AddBomb(X,Y)    { bomb(X,Y) }
-  { carry( bomb ) }     Drop( )         { not carry( bomb ) }
-  { not carry( bomb ) } PickUp( )       { carry( bomb ) }
+  { carry(bomb) }       Drop()          { not carry(bomb) }
+  { not carry(bomb) }   PickUp()        { carry(bomb) }
+  { true }              AddTrap(X,Y)    { trap(X,Y) }
 
 Beliefs:
   start(0,1).
-  clean( blockWorld ) :- not bomb(X,Y) , not carry(bomb).
+  clean(blockWorld) :- not bomb(X,Y) , not carry(bomb).
 
 Plans:
   B(start(X,Y)) ;
-  @blockworld( associateWith(robot0), _ );
-  @blockworld( enter( X, Y, blue ), _ )
+  @blockworld(associateWith(robot0), _);
+  @blockworld(enter(X,Y,blue), _)
 
 Goals:
-  clean( blockWorld )
+  findTrap(blockWorld) and clean(blockWorld)
 
 PG-rules:
-  clean( blockWorld ) <- bomb( X, Y ) |
+  clean(blockWorld) <- bomb(X,Y) and trap(A,B) |
   {
-    goto( X, Y );
-    @blockworld( pickup( ), _ );
-    PickUp( );
-    RemoveBomb( X, Y );
-    goto( 0, 0 );
-    @blockworld( drop( ), _ );
-    Drop( )
+    goto(X,Y);
+    @blockworld(pickup(), _);
+    PickUp();
+    RemoveBomb(X,Y);
+    goto(A,B);
+    @blockworld(drop(), _);
+    Drop()
   }
 
 PC-rules:
-  message( sally, inform, La, On, bombAt( X, Y ) ) <- true |
+  message(sally, inform, La, On, bombAt(X,Y)) <- true |
   {   
-    if B( not bomb( A, B ) ) then
+    if B(not bomb(A,B)) then
     { 
-      AddBomb( X, Y );
-      adoptz( clean( blockWorld ) )
+      AddBomb(X,Y);
+      adoptz(clean(blockWorld))
     }
     else
     {
-      AddBomb( X, Y )
+      AddBomb(X,Y)
     }
   }
 
-  message( jack, inform, La, On, trapAt( X, Y ) ) <- true |
+  message(jack, inform, La, On, trapAt(X,Y)) <- true |
   {
-    if B( not trap( A, B) ) then
+    if B(not trap(A,B)) then
     {
-      AddTrap( X, Y );
+       AddTrap(X,Y);
+       adoptz(findTrap(blockWorld))
     }
-
+    else 
+    {
+      AddTrap(X,Y)
+    }
 
   }
 
