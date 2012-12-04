@@ -6,6 +6,7 @@ BeliefUpdates:
   { carry(bomb) }       Drop()          { not carry(bomb) }
   { not carry(bomb) }   PickUp()        { carry(bomb) }
   { true }              AddTrap(X,Y)    { trap(X,Y) }
+  { trap(X,Y) }         RemoveTrap(X,Y) { not trap(X,Y) }
 
 Beliefs:
   start(0,1).
@@ -62,9 +63,17 @@ PC-rules:
 
 
 PR-rules:
-  @blockworld( pickup(), _ ); REST <- true |
+  @blockworld(pickup(), _); REST <- true |
   {
-    @blockworld( sensePosition(), POS );
+    @blockworld(sensePosition(), POS);
     B(POS = [actionresult([X,Y])]);
-    RemoveBomb( X, Y )
+    RemoveBomb(X,Y)
   }
+
+  % TODO: do we need this?
+  %@blockworld(drop(), _); REST <- true |
+  %{
+  %  @blockworld(sensePosition(), POS);
+  %  B(POS = [actionresult([X,Y])]);
+  %  RemoveTrap(X,Y)
+  %}

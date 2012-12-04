@@ -1,22 +1,59 @@
 PC-rules:
-  goto( X, Y ) <- true |
+  goto(X,Y) <- true |
   {
-    @blockworld( sensePosition(), POS );
+    @blockworld(sensePosition(), POS);
     B(POS = [actionresult([A,B])]);
+  
+    B(is(GO,int(0)));
+
     if B(A > X) then
-    { @blockworld( west(), L );
-      goto( X, Y )
+    { 
+      @blockworld(west(), L);
+
+      @blockworld(sensePosition(), POS2);
+      B(POS2 = [actionresult([A2,B2])]);
+
+      if B(not A2 = A or not B2 = B) then 
+        goto(X, Y)
+      else 
+        B(is(GO,int(1))) 
     }
-    else if B(A < X) then
-    { @blockworld( east(), L );
-      goto( X, Y )
+    else if B(A < X or GO = 1) then
+    { 
+      @blockworld(east(), L);
+
+      @blockworld(sensePosition(), POS2);
+      B(POS2 = [actionresult([A2,B2])]);
+
+      if B(not A2 = A or not B2 = B) then 
+        goto(X, Y)
+      else 
+        B(is(GO,int(1))) 
+
     }
-    else if B(B > Y) then
-    { @blockworld( north(), L );
-      goto( X, Y )
+    else if B(B > Y or GO = 1) then
+   { 
+      @blockworld(north(), L);
+
+      @blockworld(sensePosition(), POS2);
+      B(POS2 = [actionresult([A2,B2])]);
+
+      if B(not A2 = A or not B2 = B) then 
+        goto(X, Y)
+      else 
+        B(is(GO,int(1))) 
     }
-    else if B(B < Y) then
-    { @blockworld( south(), L );
-      goto( X, Y )
+    else if B(B < Y or GO = 1) then
+    { 
+      @blockworld(south(), L);
+
+      @blockworld(sensePosition(), POS2);
+      B(POS2 = [actionresult([A2,B2])]);
+
+      if B(not A2 = A or not B2 = B) then 
+        goto(X, Y)
+      else 
+        B(is(GO,int(1))) 
     }
-  }
+
+}  
